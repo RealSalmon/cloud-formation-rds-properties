@@ -7,6 +7,7 @@ jobs:
       - image: python:alpine3.6
     environment:
       - PYTHONPATH: python
+      - AWS_REGION: us-east-1
     steps:
       - checkout
       - run:
