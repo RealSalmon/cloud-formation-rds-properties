@@ -2,6 +2,7 @@
 
 ## A Lambda backed custom resource for CloudFormation that provides information about an RDS instance
 
+[![CircleCI](https://circleci.com/gh/RealSalmon/cloud-formation-rds-properties.svg?style=svg)](https://circleci.com/gh/RealSalmon/cloud-formation-rds-properties)
 
 ### Purpose:
 This custom resource provides information about an AWS RDS instance.
