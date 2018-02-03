@@ -1,0 +1,65 @@
+---
+
+AWSTemplateFormatVersion: 2010-09-09
+
+Description: "Test stack for the cloud-formation-rds-properties custom resource"
+
+Parameters:
+
+  RdsPropertiesStackname:
+    Type: "String"
+    Description: "The CloudFormation stack name containing the rds-properties resource"
+
+  DBInstanceIdentifier:
+    Type: "String"
+    Description: "The DBInstanceIdentifier of the RDS instance to use"
+
+Resources:
+
+  RdsProperties:
+    Type: "AWS::CloudFormation::CustomResource"
+    Version: "1.0"
+    Properties:
+      ServiceToken:
+        Fn::ImportValue:
+          !Sub "${RdsPropertiesStackname}-FunctionArn"
+      DBInstanceIdentifier: !Ref "DBInstanceIdentifier"
+
+Outputs:
+  DBInstanceArn:
+    Description: "The ARN of the RDS instance"
+    Value: !GetAtt ["RdsProperties", "DBInstanceArn"]
+
+  DbiResourceId:
+    Description: "The AWS Region-unique, immutable identifier for the DB instance."
+    Value: !GetAtt ["RdsProperties", "DbiResourceId"]
+
+  DBName:
+    Description: "The name of the database that was created with the RDS instance"
+    Value: !GetAtt ["RdsProperties", "DBName"]
+
+  EndpointAddress:
+    Description: "The endpoint address of the RDS instance"
+    Value: !GetAtt ["RdsProperties", "Endpoint.Address"]
+
+  EndpointPort:
+    Description: "The endpoint port of the RDS instance"
+    Value: !GetAtt ["RdsProperties", "Endpoint.Port"]
+
+  Engine:
+    Description: "The engine of the RDS instance"
+    Value: !GetAtt ["RdsProperties", "Engine"]
+
+  EngineVersion:
+    Description: "The engine version of the RDS instance"
+    Value: !GetAtt ["RdsProperties", "EngineVersion"]
+
+  IAMDatabaseAuthenticationEnabled:
+    Description: "True if mapping of AWS Identity and Access Management (IAM) accounts to
+database accounts is enabled, and otherwise false."
+    Value: !GetAtt ["RdsProperties", "IAMDatabaseAuthenticationEnabled"]
+
+  MasterUsername:
+    Description: "The master username for the RDS instance"
+    Value: !GetAtt ["RdsProperties", "MasterUsername"]
+
