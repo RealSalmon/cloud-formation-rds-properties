@@ -5,6 +5,8 @@ jobs:
   build-python36:
     docker:
       - image: python:alpine3.6
+    environment:
+      - PYTHONPATH: python
     steps:
       - checkout
       - run:
