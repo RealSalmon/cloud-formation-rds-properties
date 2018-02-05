@@ -1,17 +1,17 @@
 # cloud-formation-rds-properties
 
-## A Lambda backed custom resource for CloudFormation that provides information about an RDS instance
+## A Lambda backed custom resource for CloudFormation that provides information about an RDS instance or cluster
 
 [![CircleCI](https://circleci.com/gh/RealSalmon/cloud-formation-rds-properties.svg?style=svg)](https://circleci.com/gh/RealSalmon/cloud-formation-rds-properties)
 
 ### Purpose:
-This custom resource provides information about an AWS RDS instance.
+This custom resource provides information about an AWS RDS instance or cluster.
 
-It might be useful in situations where your RDS instance is outside of a
+It might be useful in situations where your RDS resource is outside of a
 CloudFormation stack where it would be helpful to have that information without
 the need to enter several parameters. It might also be helpful in situations
-where you need additional information about an RDS instance that the return
-values for a AWS::RDS::DBInstance type do not include.
+where you need additional information about an RDS resource that the return
+values for AWS::RDS::DBInstance and AWS::RDS::DBCluster do not include.
 
 ### Installation
 This custom resource can be installed on your AWS account by deploying the 
@@ -33,8 +33,9 @@ RdsProperties:
   Type: "AWS::CloudFormation::CustomResource"
   Version: "1.0"
   Properties:
-    ServiceToken: LAMDA_FUNCTION_ARN,
-    DBInstanceIdentifier: DB_INSTANCE_IDENTIFIER,
+    ServiceToken: LAMDA_FUNCTION_ARN
+    DBInstanceIdentifier: DB_INSTANCE_IDENTIFIER
+    DBClusterIdentifier: DB_CLUSTER_IDENTIFIER,
 ```
 ### Properties
 
@@ -45,10 +46,18 @@ Type: String
 Required: Yes
 
 #### DBInstanceIdentifier
-##### The DBInstanceIdentifier of the RDS instance to query
+##### The DBInstanceIdentifier of an RDS instance to query
 Type: String
 
-Required: Yes
+Required: Conditional. Exactly one of either DBInstanceIdentifier or 
+DBClusterIdentifier are required
+
+#### DBClusterIdentifier
+##### The DBClusterIdentifier of an RDS cluster to query
+Type: String
+
+Required: Conditional. Exactly one of either DBInstanceIdentifier or 
+DBClusterIdentifier are required
 
 
 ### Return Values
@@ -61,26 +70,32 @@ Ref returns the DBInstanceIdentifier property
 Fn::GetAtt returns a value for a specified attribute of this type. The 
 following are the available attributes.
 
-##### DBInstanceArn
-The ARN of the RDS instance
+##### Arn
+The ARN of the RDS resource.
 
-##### DbiResourceId
-The AWS Region-unique, immutable identifier for the DB instance.
+##### ResourceId
+The AWS Region-unique, immutable identifier for the RDS resource. For 
+instances, this will be the DbiResourceId. For clusters, this will be the 
+DbClusterResourceId.
 
 ##### DBName
-The name of the database that was created with the RDS instance
+The name of the database that was created with the RDS resource
 
 ##### Endpoint.Address
-The endpoint address of the RDS instance
+The endpoint address of the RDS resource
 
 ##### Endpoint.Port
-The endpoint port of the RDS instance
+The endpoint port of the RDS resource
+
+#### ReadEndpoint.Address
+The reader endpoint for the RDS resource. For instances, this will always be
+the same as Endpoint.Address
 
 ##### Engine
-The engine of the RDS instance
+The engine of the RDS resource
 
 ##### EngineVersion
-The engine version of the RDS instance
+The engine version of the RDS resource
 
 ##### IAMDatabaseAuthenticationEnabled
 True if mapping of AWS Identity and Access Management (IAM) accounts to 
