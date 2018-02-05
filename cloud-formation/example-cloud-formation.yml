@@ -7,12 +7,21 @@ Description: "Test stack for the cloud-formation-rds-properties custom resource"
 Parameters:
 
   RdsPropertiesStackname:
-    Type: "String"
     Description: "The CloudFormation stack name containing the rds-properties resource"
-
-  DBInstanceIdentifier:
     Type: "String"
-    Description: "The DBInstanceIdentifier of the RDS instance to use"
+
+  DbIdentifier:
+    Description: "The DbInstanceIdentifier or DbClusterIdentifier of the RDS resource to connect to"
+    Type: "String"
+
+  DbIdentifierType:
+    Description: "\"cluster\" or \"instance\" depending on the type of DbIdentifier"
+    Type: "String"
+    AllowedValues: ["cluster", "instance"]
+
+Conditions:
+  DbIdentifierIsInstance: !Equals [!Ref "DbIdentifierType", "instance"]
+  DbIdentifierIsCluster: !Equals [!Ref "DbIdentifierType", "cluster"]
 
 Resources:
 
@@ -23,28 +32,39 @@ Resources:
       ServiceToken:
         Fn::ImportValue:
           !Sub "${RdsPropertiesStackname}-FunctionArn"
-      DBInstanceIdentifier: !Ref "DBInstanceIdentifier"
+      DBInstanceIdentifier: !If
+        - "DbIdentifierIsInstance"
+        - !Ref "DbIdentifier"
+        - !Ref "AWS::NoValue"
+      DBClusterIdentifier: !If
+        - "DbIdentifierIsCluster"
+        - !Ref "DbIdentifier"
+        - !Ref "AWS::NoValue"
 
 Outputs:
-  DBInstanceArn:
-    Description: "The ARN of the RDS instance"
-    Value: !GetAtt ["RdsProperties", "DBInstanceArn"]
+  Arn:
+    Description: "The ARN of the RDS Resource"
+    Value: !GetAtt ["RdsProperties", "Arn"]
 
-  DbiResourceId:
-    Description: "The AWS Region-unique, immutable identifier for the DB instance."
-    Value: !GetAtt ["RdsProperties", "DbiResourceId"]
+  ResourceId:
+    Description: "The AWS Region-unique, immutable identifier for the RDS resource"
+    Value: !GetAtt ["RdsProperties", "ResourceId"]
 
   DBName:
-    Description: "The name of the database that was created with the RDS instance"
+    Description: "The name of the database that was created with the RDS resource"
     Value: !GetAtt ["RdsProperties", "DBName"]
 
   EndpointAddress:
-    Description: "The endpoint address of the RDS instance"
+    Description: "The endpoint address of the RDS resource"
     Value: !GetAtt ["RdsProperties", "Endpoint.Address"]
 
   EndpointPort:
-    Description: "The endpoint port of the RDS instance"
+    Description: "The endpoint port of the RDS resource"
     Value: !GetAtt ["RdsProperties", "Endpoint.Port"]
+
+  ReadEndpointAddress:
+    Description: "The read endpoint address of the RDS resource"
+    Value: !GetAtt ["RdsProperties", "ReadEndpoint.Address"]
 
   Engine:
     Description: "The engine of the RDS instance"
