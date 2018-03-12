@@ -41,7 +41,7 @@ def get_data_value(data_key, resource, data_map):
         x, y = resource_key.split('.')
         return resource[x][y]
     else:
-        return resource[resource_key]
+        return resource.get(resource_key)
 
 
 def send_response(request, response, status=None, reason=None):
