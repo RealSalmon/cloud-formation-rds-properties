@@ -122,6 +122,52 @@ def test_success_instance():
     # assert 'ResourceId' in data
 
 
+@mock_rds
+def test_instance_without_db_name():
+
+    instance_id = 'my-rds-instance'
+    engine = 'mysql'
+    engine_version = '1.2.3'
+    master_username = 'root'
+
+    # Create the database instance
+    client = boto3.client('rds')
+    client.create_db_instance(
+        DBInstanceIdentifier=instance_id,
+        AllocatedStorage=10,
+        DBInstanceClass='t2.small',
+        Engine=engine,
+        EngineVersion=engine_version,
+        MasterUsername=master_username,
+        MasterUserPassword='override all security',
+        EnableIAMDatabaseAuthentication=True
+    )
+
+    event = get_event()
+    event['ResourceProperties']['DBInstanceIdentifier'] = instance_id
+    response = lambda_handler(event)
+    assert response['Status'] == 'SUCCESS'
+    assert response['StackId'] == event['StackId']
+    assert response['LogicalResourceId'] == event['LogicalResourceId']
+    assert response['PhysicalResourceId'] == instance_id
+    assert response['RequestId'] == event['RequestId']
+
+    data = response['Data']
+    assert data['MasterUsername'] == master_username
+    assert data['DBName'] is None
+    assert data['Engine'] == engine
+    assert data['EngineVersion'] == engine_version
+    assert 'Arn' in data
+    assert 'Endpoint.Port' in data
+    assert 'Endpoint.Address' in data
+    assert 'ReadEndpoint.Address' in data
+    assert data['ReadEndpoint.Address'] == data['Endpoint.Address']
+
+    # These are not supported by moto
+    # assert data['IAMDatabaseAuthenticationEnabled'] is True
+    # assert 'ResourceId' in data
+
+
 # moto has not implemented create_db_cluster so we'll skip these for now
 
 @mock_rds

@@ -39,9 +39,9 @@ def get_data_value(data_key, resource, data_map):
     resource_key = data_map[data_key]
     if '.' in resource_key:
         x, y = resource_key.split('.')
-        return resource.get(x, {}).get(y, "na")
+        return resource[x][y]
     else:
-        return resource.get(resource_key, "na")
+        return resource.get(resource_key)
 
 
 def send_response(request, response, status=None, reason=None):
