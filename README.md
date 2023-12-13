@@ -1,8 +1,8 @@
+![cloud-formation-rds-properties](https://github.com/realsalmon/cloud-formation-rds-properties/actions/workflows/main.yml/badge.svg)
+
 # cloud-formation-rds-properties
 
 ## A Lambda backed custom resource for CloudFormation that provides information about an RDS instance or cluster
-
-[![CircleCI](https://circleci.com/gh/RealSalmon/cloud-formation-rds-properties.svg?style=svg)](https://circleci.com/gh/RealSalmon/cloud-formation-rds-properties)
 
 ### Purpose:
 This custom resource provides information about an AWS RDS instance or cluster.
