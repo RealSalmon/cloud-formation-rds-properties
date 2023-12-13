@@ -71,7 +71,7 @@ def test_no_such_instance():
     assert response['RequestId'] == event['RequestId']
     assert response['Reason'] == 'An error occurred (DBInstanceNotFound) ' \
                                  'when calling the DescribeDBInstances ' \
-                                 'operation: Database some-db not found.'
+                                 'operation: DBInstance some-db not found.'
 
 
 @mock_rds
@@ -224,7 +224,5 @@ def skip_test_success_cluster():
     assert 'Endpoint.Port' in data
     assert 'Endpoint.Address' in data
     assert 'ReadEndpoint.Address' in data
-
-    # These are not supported by moto
-    # assert data['IAMDatabaseAuthenticationEnabled'] is True
-    # assert 'ResourceId' in data
+    assert data['IAMDatabaseAuthenticationEnabled'] is True
+    assert 'ResourceId' in data
